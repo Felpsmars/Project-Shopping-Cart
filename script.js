@@ -1,3 +1,7 @@
+const query = document.querySelector.bind(document);
+
+//usando o metodo bind para encurtar os selectors do meu código
+
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
   img.className = 'item__image';
@@ -12,14 +16,18 @@ function createCustomElement(element, className, innerText) {
   return e;
 }
 
-function createProductItemElement({ sku, name, image }) {
+// mudei os parametros da função abaixo. de id, name, image.
+
+function createProductItemElement({ id, title, thumbnail }) {
   const section = document.createElement('section');
   section.className = 'item';
 
-  section.appendChild(createCustomElement('span', 'item__sku', sku));
-  section.appendChild(createCustomElement('span', 'item__title', name));
-  section.appendChild(createProductImageElement(image));
-  section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
+  section.appendChild(createCustomElement('span', 'item__sku', id));
+  section.appendChild(createCustomElement('span', 'item__title', title));
+  section.appendChild(createProductImageElement(thumbnail));
+  section.appendChild(
+    createCustomElement('button', 'item__add', 'Adicionar ao carrinho!')
+  );
 
   return section;
 }
@@ -32,12 +40,28 @@ function cartItemClickListener(event) {
   // coloque seu código aqui
 }
 
-function createCartItemElement({ sku, name, salePrice }) {
+function createCartItemElement({ id, title, salePrice }) {
   const li = document.createElement('li');
   li.className = 'cart__item';
-  li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
+  li.innerText = `SKU: ${id} | NAME: ${title} | PRICE: $${salePrice}`;
   li.addEventListener('click', cartItemClickListener);
   return li;
 }
 
-window.onload = () => { };
+async function loadComputers() {
+  const response = await fetch(
+    'https://api.mercadolibre.com/sites/MLB/search?q=computador'
+  );
+
+  const jsonFetch = await response.json();
+
+  const add = await jsonFetch.results.forEach((product) =>
+    query('.items').appendChild(createProductItemElement(product))
+  );
+
+  return add;
+}
+
+window.onload = () => {
+  loadComputers();
+};
