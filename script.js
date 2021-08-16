@@ -1,4 +1,5 @@
 const query = document.querySelector.bind(document);
+const queryAll = document.querySelectorAll.bind(document);
 
 //usando o metodo bind para encurtar os selectors do meu código
 
@@ -16,7 +17,7 @@ function createCustomElement(element, className, innerText) {
   return e;
 }
 
-// mudei os parametros da função abaixo. de id, name, image.
+// mudei os parametros da função abaixo para id, name, image.
 
 function createProductItemElement({ id, title, thumbnail }) {
   const section = document.createElement('section');
@@ -37,13 +38,13 @@ function getSkuFromProductItem(item) {
 }
 
 function cartItemClickListener(event) {
-  // coloque seu código aqui
+  //
 }
 
-function createCartItemElement({ id, title, salePrice }) {
+function createCartItemElement({ id: sku, title: name, price: salesPrice }) {
   const li = document.createElement('li');
   li.className = 'cart__item';
-  li.innerText = `SKU: ${id} | NAME: ${title} | PRICE: $${salePrice}`;
+  li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salesPrice}`;
   li.addEventListener('click', cartItemClickListener);
   return li;
 }
@@ -61,6 +62,24 @@ async function loadComputers() {
 
   return add;
 }
+
+async function addProduct(item) {
+  try {
+    const cart = document.querySelector('.cart__items');
+    const response = await fetch(`https://api.mercadolibre.com/items/${item}`);
+    const jsonFetch = await response.json();
+
+    cart.appendChild(createCartItemElement(jsonFetch));
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+document.addEventListener('click', function (event) {
+  if (event.target.classList.contains('item__add')) {
+    return addProduct(getSkuFromProductItem(event.target.parentElement));
+  }
+});
 
 window.onload = () => {
   loadComputers();
