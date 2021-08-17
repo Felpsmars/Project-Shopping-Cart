@@ -1,5 +1,6 @@
 const query = document.querySelector.bind(document);
 const queryAll = document.querySelectorAll.bind(document);
+const emptyCart = query('.empty-cart');
 
 //usando o metodo bind para encurtar os selectors do meu código
 
@@ -82,7 +83,7 @@ async function addProduct(item) {
     const response = await fetch(`https://api.mercadolibre.com/items/${item}`);
     const jsonFetch = await response.json();
 
-    const saveCart = cart.appendChild(createCartItemElement(jsonFetch));
+    cart.appendChild(createCartItemElement(jsonFetch));
   } catch (error) {
     console.log(error);
   }
@@ -97,6 +98,10 @@ async function addProduct(item) {
 document.addEventListener('click', function ({ target }) {
   if (target.classList.contains('item__add')) {
     return addProduct(getSkuFromProductItem(target.parentNode));
+  }
+  if (target.classList.contains('empty-cart')) {
+    const cart = query('.cart__items');
+    cart.innerHTML = '';
   }
 });
 
