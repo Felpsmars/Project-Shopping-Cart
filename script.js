@@ -50,11 +50,15 @@ function createCartItemElement({ id: sku, title: name, price: salesPrice }) {
   return li;
 }
 
-async function loadComputers() {
+function loadingText() {
   const section = document.createElement('section');
   section.innerHTML = 'Loading...';
   section.className = 'loading';
   query('.items').appendChild(section);
+}
+
+async function loadComputers() {
+  loadingText();
   const loadingTag = query('.loading');
 
   const response = await fetch(
@@ -74,7 +78,7 @@ async function loadComputers() {
 
 async function addProduct(item) {
   try {
-    const cart = document.querySelector('.cart__items');
+    const cart = query('.cart__items');
     const response = await fetch(`https://api.mercadolibre.com/items/${item}`);
     const jsonFetch = await response.json();
 
@@ -84,9 +88,15 @@ async function addProduct(item) {
   }
 }
 
-document.addEventListener('click', function (event) {
-  if (event.target.classList.contains('item__add')) {
-    return addProduct(getSkuFromProductItem(event.target.parentNode));
+// troquei event pela desestruturação do { target } encurtando meu código
+
+// Na linha 93 em getSkuFromProductItem(), o parametro retornado é ".item"
+// ".item" que por sua vez retorna todos os elementos necessarios para o
+// createCartItemElement
+
+document.addEventListener('click', function ({ target }) {
+  if (target.classList.contains('item__add')) {
+    return addProduct(getSkuFromProductItem(target.parentNode));
   }
 });
 
