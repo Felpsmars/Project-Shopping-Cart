@@ -2,7 +2,7 @@ const query = document.querySelector.bind(document);
 const queryAll = document.querySelectorAll.bind(document);
 const emptyCart = query('.empty-cart');
 
-//usando o metodo bind para encurtar os selectors do meu código
+// usando o metodo bind para encurtar os selectors do meu código
 
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
@@ -28,7 +28,7 @@ function createProductItemElement({ id, title, thumbnail }) {
   section.appendChild(createCustomElement('span', 'item__title', title));
   section.appendChild(createProductImageElement(thumbnail));
   section.appendChild(
-    createCustomElement('button', 'item__add', 'Adicionar ao carrinho!')
+    createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'),
   );
 
   return section;
@@ -39,7 +39,7 @@ function getSkuFromProductItem(item) {
 }
 
 function cartItemClickListener(event) {
-  const cart = document.querySelector('.cart__items');
+  const cart = query('.cart__items');
   cart.removeChild(event.target);
 }
 
@@ -63,7 +63,7 @@ async function loadComputers() {
   const loadingTag = query('.loading');
 
   const response = await fetch(
-    'https://api.mercadolibre.com/sites/MLB/search?q=computador'
+    'https://api.mercadolibre.com/sites/MLB/search?q=computador',
   );
 
   const jsonFetch = await response.json();
@@ -71,11 +71,14 @@ async function loadComputers() {
   loadingTag.remove();
 
   const add = await jsonFetch.results.forEach((product) =>
-    query('.items').appendChild(createProductItemElement(product))
-  );
-
-  return add;
+    query('.items').appendChild(createProductItemElement(product)));
+    return add;
 }
+
+// function sumPrices({ price: salesPrice }) {
+// const totalPrice = document.querySelector('.total-prices').innerText;
+// return (totalPrice.innerText = `Total: $${salesPrice}`);
+// }
 
 async function addProduct(item) {
   try {
@@ -91,7 +94,7 @@ async function addProduct(item) {
 
 // troquei event pela desestruturação do { target } encurtando meu código
 
-// Na linha 93 em getSkuFromProductItem(), o parametro retornado é ".item"
+// Na linha 98 em getSkuFromProductItem(), o parametro retornado é ".item"
 // ".item" que por sua vez retorna todos os elementos necessarios para o
 // createCartItemElement
 
@@ -100,8 +103,8 @@ document.addEventListener('click', function ({ target }) {
     return addProduct(getSkuFromProductItem(target.parentNode));
   }
   if (target.classList.contains('empty-cart')) {
-    const cart = query('.cart__items');
-    cart.innerHTML = '';
+    const cartTag = query('section .cart__items');
+    cartTag.innerHTML = '';
   }
 });
 
