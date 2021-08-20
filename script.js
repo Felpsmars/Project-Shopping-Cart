@@ -38,9 +38,23 @@ function getSkuFromProductItem(item) {
   return item.querySelector('span.item__sku').innerText;
 }
 
+// utilizei o unary operator abaxio para transformar a string capturada em numero.
+// https://www.digitalocean.com/community/tutorials/javascript-unary-operators-simple-and-useful
+
+const sumPrices = async () => {
+  const cartItem = Array.from(document.querySelectorAll('.cart__item'));
+  const cartInnerText = cartItem.map(({ innerText }) => innerText);
+  const prices = cartInnerText.map((string) => +string.split('PRICE: $')[1]);
+  const addUp = prices.reduce((sum, current) => sum + current, 0);
+
+  const totalPrice = document.querySelector('.total-price');
+  totalPrice.innerText = addUp;
+};
+
 function cartItemClickListener(event) {
   const cart = query('.cart__items');
   cart.removeChild(event.target);
+  sumPrices();
 }
 
 function createCartItemElement({ id: sku, title: name, price: salesPrice }) {
@@ -71,8 +85,9 @@ async function loadComputers() {
   loadingTag.remove();
 
   const add = await jsonFetch.results.forEach((product) =>
-    query('.items').appendChild(createProductItemElement(product)));
-    return add;
+    query('.items')
+    .appendChild(createProductItemElement(product)));
+  return add;
 }
 
 // function sumPrices({ price: salesPrice }) {
@@ -87,6 +102,7 @@ async function addProduct(item) {
     const jsonFetch = await response.json();
 
     cart.appendChild(createCartItemElement(jsonFetch));
+    await sumPrices();
   } catch (error) {
     console.log(error);
   }
@@ -94,7 +110,7 @@ async function addProduct(item) {
 
 // troquei event pela desestruturação do { target } encurtando meu código
 
-// Na linha 98 em getSkuFromProductItem(), o parametro retornado é ".item"
+// No getSkuFromProductItem(), o parametro retornado é ".item"
 // ".item" que por sua vez retorna todos os elementos necessarios para o
 // createCartItemElement
 
